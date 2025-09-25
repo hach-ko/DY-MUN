@@ -25,7 +25,7 @@ export default function Home() {
           <ScrollReveal>
             <h1 className="font-serif text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
              DYPIS Presents<br />
-              <span className="text-primary">Model United Nations</span>
+              <span className="text-primary">DYMUN 2025</span>
             </h1>
           </ScrollReveal>
           

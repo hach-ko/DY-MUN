@@ -13,6 +13,8 @@ export default function Navigation() {
     { href: "/committees", label: "Committees" },
     { href: "/resources", label: "Resources" },
     { href: "/contact", label: "Contact" },
+    { href: "/executivecommittee", label: "Executive Committee" },
+    { href: "/executiveboard", label: "Executive Board" },
   ];
 
   const isActive = (href: string) => {
@@ -34,7 +36,7 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" data-testid="logo-link">
-            <h1 className="text-2xl font-serif font-bold text-primary cursor-pointer">
+            <h1 className="text-1xl font-serif font-bold text-primary cursor-pointer">
               DYMUN
             </h1>
           </Link>

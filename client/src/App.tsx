@@ -14,6 +14,8 @@ import About from "@/pages/About";
 import Committees from "@/pages/Committees";
 import Resources from "@/pages/Resources";
 import Contact from "@/pages/Contact";
+import ExecutiveCommittee from "@/pages/ExecutiveCommittee"
+import ExecutiveBoard from "@/pages/ExecutiveBoard"
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -25,6 +27,8 @@ function Router() {
         <Route path="/committees" component={Committees} />
         <Route path="/resources" component={Resources} />
         <Route path="/contact" component={Contact} />
+        <Route path="/executivecommittee" component={ExecutiveCommittee} />
+        <Route path="/executiveboard" component={ExecutiveBoard} />
         <Route component={NotFound} />
       </Switch>
     </AnimatePresence>
