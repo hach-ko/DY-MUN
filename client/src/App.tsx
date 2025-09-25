@@ -11,6 +11,7 @@ import LoadingOverlay from "@/components/LoadingOverlay";
 import Footer from "@/components/Footer";
 import Home from "@/pages/Home";
 import About from "@/pages/About";
+import Committees from "@/pages/Committees";
 import Resources from "@/pages/Resources";
 import Contact from "@/pages/Contact";
 import NotFound from "@/pages/not-found";
@@ -21,6 +22,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/about" component={About} />
+        <Route path="/committees" component={Committees} />
         <Route path="/resources" component={Resources} />
         <Route path="/contact" component={Contact} />
         <Route component={NotFound} />

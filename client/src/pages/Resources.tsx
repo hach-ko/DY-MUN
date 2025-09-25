@@ -1,8 +1,21 @@
 import { motion } from "framer-motion";
-import { BookOpen, FileText, Video, Download, Play, ExternalLink, Globe, Newspaper, TrendingUp, Scale } from "lucide-react";
+import { useState } from "react";
+import { BookOpen, FileText, Video, Download, Play, ExternalLink, Globe, Newspaper, TrendingUp, Scale, Filter } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ScrollReveal from "@/components/ScrollReveal";
+import { committeeResources } from "@/data/resources";
+import { committeeGroups } from "@/data/committees";
 
 export default function Resources() {
+  const [selectedCommittee, setSelectedCommittee] = useState("All Committees");
+  
+  // Get all committee names for the dropdown
+  const allCommittees = ["All Committees", ...committeeGroups.flatMap(group => 
+    group.committees.map(committee => committee.name)
+  )];
+  
+  const currentResources = committeeResources[selectedCommittee] || committeeResources["All Committees"];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -18,49 +31,40 @@ export default function Resources() {
             <h1 className="font-serif text-5xl md:text-6xl font-bold text-foreground mb-6">
               Resources
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
               Everything you need to excel at DYMUN and beyond
             </p>
+            
+            {/* Committee Filter */}
+            <div className="max-w-md mx-auto">
+              <div className="flex items-center justify-center space-x-3 mb-4">
+                <Filter className="w-5 h-5 text-primary" />
+                <span className="text-foreground font-medium">Filter by Committee:</span>
+              </div>
+              <Select value={selectedCommittee} onValueChange={setSelectedCommittee}>
+                <SelectTrigger className="w-full" data-testid="committee-filter-select">
+                  <SelectValue placeholder="Select a committee" />
+                </SelectTrigger>
+                <SelectContent>
+                  {allCommittees.map((committee) => (
+                    <SelectItem key={committee} value={committee} data-testid={`committee-option-${committee.toLowerCase().replace(/\s+/g, '-')}`}>
+                      {committee}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </ScrollReveal>
 
         {/* Resource Categories */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-          {[
-            {
-              icon: <BookOpen className="w-10 h-10" />,
-              title: "Study Guides",
-              description: "Comprehensive guides covering UN procedures, diplomatic protocols, and committee structures.",
-              links: [
-                { icon: <Download className="w-4 h-4" />, text: "Rules of Procedure" },
-                { icon: <Download className="w-4 h-4" />, text: "Delegate Handbook" },
-                { icon: <Download className="w-4 h-4" />, text: "Research Techniques" },
-              ],
-            },
-            {
-              icon: <FileText className="w-10 h-10" />,
-              title: "Templates",
-              description: "Ready-to-use templates for position papers, resolutions, and working papers.",
-              links: [
-                { icon: <Download className="w-4 h-4" />, text: "Position Paper Template" },
-                { icon: <Download className="w-4 h-4" />, text: "Resolution Format" },
-                { icon: <Download className="w-4 h-4" />, text: "Working Paper Guide" },
-              ],
-            },
-            {
-              icon: <Video className="w-10 h-10" />,
-              title: "Video Tutorials",
-              description: "Expert-led video content covering speaking techniques, negotiation skills, and debate strategies.",
-              links: [
-                { icon: <Play className="w-4 h-4" />, text: "Public Speaking Mastery" },
-                { icon: <Play className="w-4 h-4" />, text: "Negotiation Tactics" },
-                { icon: <Play className="w-4 h-4" />, text: "Committee Dynamics" },
-              ],
-            },
-          ].map((category, index) => (
-            <ScrollReveal key={index} delay={index * 0.1}>
+          {currentResources.map((category, index) => (
+            <ScrollReveal key={`${selectedCommittee}-${index}`} delay={index * 0.1}>
               <div className="bg-card p-8 rounded-lg card-hover">
-                <div className="text-primary mb-4">{category.icon}</div>
+                <div className="text-primary mb-4">
+                  <category.icon className="w-10 h-10" />
+                </div>
                 <h3 className="font-serif text-2xl font-semibold text-card-foreground mb-4">
                   {category.title}
                 </h3>
@@ -69,11 +73,11 @@ export default function Resources() {
                   {category.links.map((link, linkIndex) => (
                     <a
                       key={linkIndex}
-                      href="#"
+                      href={link.href || "#"}
                       className="block text-primary hover:text-accent transition-colors duration-200 flex items-center"
-                      data-testid={`resource-${category.title.toLowerCase().replace(" ", "-")}-${linkIndex}`}
+                      data-testid={`resource-${category.title.toLowerCase().replace(/\s+/g, "-")}-${linkIndex}`}
                     >
-                      {link.icon}
+                      <link.icon className="w-4 h-4" />
                       <span className="ml-2">{link.text}</span>
                     </a>
                   ))}

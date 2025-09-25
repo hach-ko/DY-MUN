@@ -24,7 +24,7 @@ export default function Home() {
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <h1 className="font-serif text-5xl md:text-7xl font-bold text-foreground mb-6 leading-tight">
-              Diplomatic Youth<br />
+             DYPIS Presents<br />
               <span className="text-primary">Model United Nations</span>
             </h1>
           </ScrollReveal>

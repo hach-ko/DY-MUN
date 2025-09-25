@@ -16,3 +16,31 @@ export const insertUserSchema = createInsertSchema(users).pick({
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+
+// Committee Types (Static data for now)
+export interface Committee {
+  name: string;
+  subtitle: string;
+  topic: string;
+  chair: string;
+  level: string;
+  img: string;
+  overview?: string;
+  resources?: string[];
+}
+
+export interface CommitteeGroup {
+  title: string;
+  color: string;
+  badge: string;
+  committees: Committee[];
+}
+
+// Contact Types
+export interface ContactPerson {
+  name: string;
+  position: string;
+  phone?: string;
+  email?: string;
+  type: 'secretariat' | 'organizing' | 'main';
+}
