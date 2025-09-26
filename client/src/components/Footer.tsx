@@ -13,10 +13,7 @@ export default function Footer() {
             </p>
             <div className="flex space-x-4">
               {[
-                { icon: <Twitter className="w-5 h-5" />, href: "#" },
-                { icon: <Instagram className="w-5 h-5" />, href: "#" },
-                { icon: <Linkedin className="w-5 h-5" />, href: "#" },
-                { icon: <Facebook className="w-5 h-5" />, href: "#" },
+                { icon: <Instagram className="w-5 h-5" />, href: "https://www.instagram.com/dymun.nerul/" },
               ].map((social, index) => (
                 <a
                   key={index}
@@ -55,16 +52,16 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-card-foreground mb-4">Contact</h4>
             <ul className="space-y-2 text-muted-foreground">
-              <li>info@dymun.org</li>
-              <li>+1 (555) 123-4567</li>
-              <li>International Conference Center</li>
+              <li>dymun@dypisnerul.in</li>
+              <li>+91 86574 40454</li>
+              <li>D Y Patil International School</li>
             </ul>
           </div>
         </div>
         
         <div className="border-t border-border mt-8 pt-8 text-center">
           <p className="text-muted-foreground">
-            © 2024 DYMUN. All rights reserved. | Empowering future diplomats worldwide.
+            © 2025 DYMUN. All rights reserved. | Empowering future diplomats worldwide.
           </p>
         </div>
       </div>

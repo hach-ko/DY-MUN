@@ -89,22 +89,7 @@ export default function Contact() {
               </a>
             </div>
 
-            {/* Social Media Card */}
-            <div className="p-6 bg-card rounded-lg shadow-lg text-center">
-              <Instagram className="w-8 h-8 text-primary mx-auto mb-4" />
-              <h3 className="font-serif text-2xl font-semibold text-card-foreground mb-4">
-                Social Media
-              </h3>
-              <a
-                href="https://instagram.com/dymun.nerul"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:text-accent transition-colors duration-200"
-                data-testid="social-link-instagram"
-              >
-                <Instagram className="w-5 h-5 mx-auto" />
-              </a>
-            </div>
+
 
             {/* Quick Registration Card */}
             <div className="p-6 bg-card rounded-lg shadow-lg text-center">
