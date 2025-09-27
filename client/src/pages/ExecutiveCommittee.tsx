@@ -8,20 +8,51 @@ export default function ExecutiveCommittee() {
       name: "Aayan Kumar",
       role: "Secretary General",
       description: "Leading DYMUN with 5+ years of MUN experience and passion for diplomacy.",
+      photo: "https://your-image-url.com/aayan.jpg",
     },
     {
       name: "Yuvraj Behera",
       role: "Deputy Joint Secretary General",
       description: "Yuvraj works closely with the Secretariat to facilitate seamless coordination across all committees. Their role involves supporting both the Executive Board and delegates, ensuring the conference operates flawlessly.",
+      photo: "https://your-image-url.com/yuvraj.jpg",
     },
     {
       name: "Suvirr Menon",
       role: "Deputy Joint Secretary General",
       description: "Suvirr co-leads from the front, leveraging international Model United Nations experience to ensure smooth conference execution. They oversee committees and serve as a vital bridge between the Executive Board and delegates.",
+      photo: "https://your-image-url.com/suvirr.jpg",
+    },
+    {
+      name: "REDACTED",
+      role: "REDACTED",
+      description: "Details will be announced soon.",
+      photo: "https://your-image-url.com/redacted1.jpg",
+    },
+    {
+      name: "REDACTED",
+      role: "REDACTED",
+      description: "Details will be announced soon.",
+      photo: "https://your-image-url.com/redacted2.jpg",
+    },
+    {
+      name: "REDACTED",
+      role: "REDACTED",
+      description: "Details will be announced soon.",
+      photo: "https://your-image-url.com/redacted3.jpg",
+    },
+    {
+      name: "REDACTED",
+      role: "REDACTED",
+      description: "Details will be announced soon.",
+      photo: "https://your-image-url.com/redacted4.jpg",
+    },
+    {
+      name: "REDACTED",
+      role: "REDACTED",
+      description: "Details will be announced soon.",
+      photo: "https://your-image-url.com/redacted5.jpg",
     },
   ];
-
-
 
   return (
     <motion.div
@@ -50,16 +81,21 @@ export default function ExecutiveCommittee() {
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
               Meet the Secretariat
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {secretariat.map((member, index) => (
                 <motion.div
                   key={index}
-                  className="bg-card rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
+                  className="bg-card rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col items-center"
                   whileHover={{ scale: 1.03, y: -5 }}
                   transition={{ duration: 0.3 }}
                   data-testid={`secretariat-member-${member.name.toLowerCase().replace(" ", "-")}`}
                 >
-                  <div className="p-6">
+                  <img
+                    src={member.photo}
+                    alt={member.name}
+                    className="w-24 h-24 rounded-full object-cover mt-6 mb-4 border-4 border-primary shadow"
+                  />
+                  <div className="p-6 text-center">
                     <h3 className="font-serif text-xl font-bold text-foreground mb-2">{member.name}</h3>
                     <p className="text-primary font-semibold mb-3">{member.role}</p>
                     <p className="text-muted-foreground text-sm leading-relaxed">{member.description}</p>
