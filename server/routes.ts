@@ -1,13 +1,119 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import bcrypt from "bcrypt";
+import { insertForumDoubtSchema } from "@shared/schema";
+import "./types";
+
+// Authentication middleware
+function requireAuth(req: Request, res: Response, next: NextFunction) {
+  if (req.session?.userId) {
+    next();
+  } else {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // put application routes here
-  // prefix all routes with /api
+  // Login route
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { gmail, password } = req.body;
+      
+      if (!gmail || !password) {
+        return res.status(400).json({ message: "Gmail and password are required" });
+      }
 
-  // use storage to perform CRUD operations on the storage interface
-  // e.g. storage.insertUser(user) or storage.getUserByUsername(username)
+      const user = await storage.getUserByGmail(gmail);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      const isValid = await bcrypt.compare(password, user.password);
+      if (!isValid) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+
+      req.session.userId = user.id;
+      
+      const { password: _, ...userWithoutPassword } = user;
+      res.json({ user: userWithoutPassword });
+    } catch (error) {
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  // Get current user
+  app.get("/api/auth/me", requireAuth, async (req, res) => {
+    try {
+      const user = await storage.getUser(req.session.userId!);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const { password: _, ...userWithoutPassword } = user;
+      res.json({ user: userWithoutPassword });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get user" });
+    }
+  });
+
+  // Logout route
+  app.post("/api/auth/logout", (req, res) => {
+    req.session.destroy((err: Error | null) => {
+      if (err) {
+        return res.status(500).json({ message: "Logout failed" });
+      }
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
+  // Forum routes
+  app.post("/api/forum/doubts", requireAuth, async (req, res) => {
+    try {
+      const validatedData = insertForumDoubtSchema.parse(req.body);
+      const doubt = await storage.createForumDoubt({
+        ...validatedData,
+        userId: req.session.userId!,
+      });
+      res.json(doubt);
+    } catch (error) {
+      res.status(400).json({ message: "Failed to create doubt" });
+    }
+  });
+
+  app.get("/api/forum/doubts/:committee", async (req, res) => {
+    try {
+      const { committee } = req.params;
+      const doubts = await storage.getForumDoubtsByCommittee(committee);
+      const approvedDoubts = doubts.filter(d => d.isApproved);
+      res.json(approvedDoubts);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get doubts" });
+    }
+  });
+
+  app.get("/api/forum/doubts/user/me", requireAuth, async (req, res) => {
+    try {
+      const doubts = await storage.getForumDoubtsByUser(req.session.userId!);
+      res.json(doubts);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get user doubts" });
+    }
+  });
+
+  app.patch("/api/forum/doubts/:id", requireAuth, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updated = await storage.updateForumDoubt(id, req.body);
+      if (!updated) {
+        return res.status(404).json({ message: "Doubt not found" });
+      }
+      res.json(updated);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update doubt" });
+    }
+  });
 
   const httpServer = createServer(app);
 
