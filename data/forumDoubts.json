@@ -1,1 +1,29 @@
-[]
+[
+  {
+    "id": "test-doubt-1",
+    "userId": "81631356-9736-4bfc-8f71-76ca85dfe325",
+    "committeeName": "Harry Potter",
+    "question": "What are the key priorities for rebuilding Hogwarts after the Battle?",
+    "response": "The primary focus should be on infrastructure restoration, establishing new governance systems, and implementing social healing programs for students and staff affected by the war.",
+    "isApproved": true,
+    "createdAt": "2024-01-15T10:30:00.000Z"
+  },
+  {
+    "id": "test-doubt-2",
+    "userId": "81631356-9736-4bfc-8f71-76ca85dfe325",
+    "committeeName": "Harry Potter",
+    "question": "How should we address the treatment of former Death Eaters in the post-war wizarding world?",
+    "response": "This requires a balanced approach combining justice and reconciliation. We recommend establishing truth commissions, rehabilitation programs, and clear legal frameworks for accountability while promoting healing.",
+    "isApproved": true,
+    "createdAt": "2024-01-16T14:20:00.000Z"
+  },
+  {
+    "id": "test-doubt-3",
+    "userId": "other-user-id",
+    "committeeName": "Harry Potter",
+    "question": "What measures can be taken to prevent another dark wizard from rising to power?",
+    "response": "Comprehensive education reform, transparent governance, strong democratic institutions, and vigilant monitoring of dark magic activities are essential preventive measures.",
+    "isApproved": true,
+    "createdAt": "2024-01-17T09:15:00.000Z"
+  }
+]

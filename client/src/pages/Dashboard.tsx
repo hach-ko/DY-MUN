@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -21,6 +21,12 @@ export default function Dashboard() {
   const [, setLocation] = useLocation();
   const [newQuestion, setNewQuestion] = useState("");
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      setLocation("/");
+    }
+  }, [authLoading, user, setLocation]);
 
   const { data: myDoubts, isLoading: doubtsLoading } = useQuery<ForumDoubt[]>({
     queryKey: ["/api/forum/doubts/user/me"],
@@ -58,17 +64,12 @@ export default function Dashboard() {
     },
   });
 
-  if (authLoading) {
+  if (authLoading || !user) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
-  }
-
-  if (!user) {
-    setLocation("/");
-    return null;
   }
 
   const userCommittee = committeeGroups
