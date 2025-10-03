@@ -26,6 +26,29 @@ export class MemStorage implements IStorage {
   constructor() {
     this.users = new Map();
     this.forumDoubts = new Map();
+    this.seedUsers();
+  }
+
+  private async seedUsers() {
+    const committees = ["Harry Potter", "Disney", "FIFA", "CTC", "UNHRC", "UNSC", "SPECPOL", "IAEA"];
+    const institutions = ["Delhi Public School", "Modern School", "The Shri Ram School", "Sanskriti School", "Amity International"];
+    
+    const placeholderUsers = [
+      { idNumber: "DY001", gmail: "delegate1@example.com", password: "password123", committee: committees[0], institution: institutions[0] },
+      { idNumber: "DY002", gmail: "delegate2@example.com", password: "password123", committee: committees[1], institution: institutions[1] },
+      { idNumber: "DY003", gmail: "delegate3@example.com", password: "password123", committee: committees[2], institution: institutions[2] },
+      { idNumber: "DY004", gmail: "delegate4@example.com", password: "password123", committee: committees[3], institution: institutions[3] },
+      { idNumber: "DY005", gmail: "delegate5@example.com", password: "password123", committee: committees[4], institution: institutions[4] },
+      { idNumber: "DY006", gmail: "delegate6@example.com", password: "password123", committee: committees[5], institution: institutions[0] },
+      { idNumber: "DY007", gmail: "delegate7@example.com", password: "password123", committee: committees[6], institution: institutions[1] },
+      { idNumber: "DY008", gmail: "delegate8@example.com", password: "password123", committee: committees[7], institution: institutions[2] },
+      { idNumber: "DY009", gmail: "delegate9@example.com", password: "password123", committee: committees[0], institution: institutions[3] },
+      { idNumber: "DY010", gmail: "delegate10@example.com", password: "password123", committee: committees[1], institution: institutions[4] },
+    ];
+
+    for (const userData of placeholderUsers) {
+      await this.createUser(userData);
+    }
   }
 
   async getUser(id: string): Promise<User | undefined> {
