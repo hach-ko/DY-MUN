@@ -1,13 +1,23 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BookOpen, FileText, Video, Download, Play, ExternalLink, Globe, Newspaper, TrendingUp, Scale, Filter } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ScrollReveal from "@/components/ScrollReveal";
 import { committeeResources } from "@/data/resources";
 import { committeeGroups } from "@/data/committees";
+import { useLocation } from "wouter";
 
 export default function Resources() {
-  const [selectedCommittee, setSelectedCommittee] = useState("All Committees");
+  const [location] = useLocation();
+  const urlParams = new URLSearchParams(location.split('?')[1] || '');
+  const committeeParam = urlParams.get('committee');
+  const [selectedCommittee, setSelectedCommittee] = useState(committeeParam || "All Committees");
+  
+  useEffect(() => {
+    if (committeeParam) {
+      setSelectedCommittee(committeeParam);
+    }
+  }, [committeeParam]);
   
   // Get all committee names for the dropdown
   const allCommittees = ["All Committees", ...committeeGroups.flatMap(group => 

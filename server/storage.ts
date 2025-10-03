@@ -1,6 +1,8 @@
 import { type User, type InsertUser, type ForumDoubt, type InsertForumDoubt } from "@shared/schema";
 import { randomUUID } from "crypto";
 import bcrypt from "bcrypt";
+import fs from "fs/promises";
+import path from "path";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -21,13 +23,64 @@ export interface IStorage {
 
 export class MemStorage implements IStorage {
   private users: Map<string, User>;
-  private forumDoubts: Map<string, ForumDoubt>;
+  private doubtsFilePath: string;
+  private writeQueue: Promise<any> = Promise.resolve();
+  private initialized: Promise<void>;
 
   constructor() {
     this.users = new Map();
-    this.forumDoubts = new Map();
+    this.doubtsFilePath = path.join(process.cwd(), "data", "forumDoubts.json");
     this.seedUsers();
+    this.initialized = this.initializeStorage();
   }
+
+  private async initializeStorage() {
+    try {
+      await fs.mkdir(path.dirname(this.doubtsFilePath), { recursive: true });
+      try {
+        await fs.access(this.doubtsFilePath);
+        const content = await fs.readFile(this.doubtsFilePath, "utf-8");
+        JSON.parse(content);
+      } catch (error) {
+        try {
+          const content = await fs.readFile(this.doubtsFilePath, "utf-8");
+          if (content && content.trim() !== "") {
+            const backupPath = `${this.doubtsFilePath}.backup-${Date.now()}`;
+            await fs.writeFile(backupPath, content, "utf-8");
+            console.error(`Corrupted JSON file backed up to ${backupPath}`);
+          }
+        } catch {}
+        await fs.writeFile(this.doubtsFilePath, "[]", "utf-8");
+      }
+    } catch (error) {
+      console.error("Failed to initialize storage:", error);
+      throw error;
+    }
+  }
+
+  private async readDoubtsFromFile(): Promise<ForumDoubt[]> {
+    await this.initialized;
+    try {
+      const data = await fs.readFile(this.doubtsFilePath, "utf-8");
+      const doubts = JSON.parse(data);
+      return doubts.map((doubt: any) => ({
+        ...doubt,
+        createdAt: new Date(doubt.createdAt),
+      }));
+    } catch (error) {
+      console.error("Failed to read doubts from file:", error);
+      try {
+        const content = await fs.readFile(this.doubtsFilePath, "utf-8");
+        if (content && content.trim() !== "") {
+          const backupPath = `${this.doubtsFilePath}.backup-${Date.now()}`;
+          await fs.writeFile(backupPath, content, "utf-8");
+          console.error(`Corrupted JSON file backed up to ${backupPath}`);
+        }
+      } catch {}
+      return [];
+    }
+  }
+
 
   private async seedUsers() {
     const committees = ["Harry Potter", "Disney", "FIFA", "CTC", "UNHRC", "UNSC", "SPECPOL", "IAEA"];
@@ -76,41 +129,64 @@ export class MemStorage implements IStorage {
   }
 
   async createForumDoubt(insertDoubt: InsertForumDoubt): Promise<ForumDoubt> {
-    const id = randomUUID();
-    const doubt: ForumDoubt = {
-      ...insertDoubt,
-      response: insertDoubt.response ?? null,
-      isApproved: insertDoubt.isApproved ?? false,
-      id,
-      createdAt: new Date(),
+    await this.initialized;
+    const operation = async (): Promise<ForumDoubt> => {
+      const doubts = await this.readDoubtsFromFile();
+      const id = randomUUID();
+      const doubt: ForumDoubt = {
+        ...insertDoubt,
+        response: insertDoubt.response ?? null,
+        isApproved: insertDoubt.isApproved ?? false,
+        id,
+        createdAt: new Date(),
+      };
+      doubts.push(doubt);
+      await this.writeDoubtsToFileInternal(doubts);
+      return doubt;
     };
-    this.forumDoubts.set(id, doubt);
-    return doubt;
+    this.writeQueue = this.writeQueue.then(operation, operation);
+    return await this.writeQueue;
+  }
+
+  private async writeDoubtsToFileInternal(doubts: ForumDoubt[]): Promise<void> {
+    try {
+      const tempPath = `${this.doubtsFilePath}.tmp`;
+      await fs.writeFile(tempPath, JSON.stringify(doubts, null, 2), "utf-8");
+      await fs.rename(tempPath, this.doubtsFilePath);
+    } catch (error) {
+      console.error("Failed to write doubts to file:", error);
+      throw error;
+    }
   }
 
   async getForumDoubtsByCommittee(committeeName: string): Promise<ForumDoubt[]> {
-    return Array.from(this.forumDoubts.values()).filter(
-      (doubt) => doubt.committeeName === committeeName,
-    );
+    const doubts = await this.readDoubtsFromFile();
+    return doubts.filter((doubt) => doubt.committeeName === committeeName && doubt.isApproved);
   }
 
   async getForumDoubtsByUser(userId: string): Promise<ForumDoubt[]> {
-    return Array.from(this.forumDoubts.values()).filter(
-      (doubt) => doubt.userId === userId,
-    );
+    const doubts = await this.readDoubtsFromFile();
+    return doubts.filter((doubt) => doubt.userId === userId);
   }
 
   async updateForumDoubt(id: string, updates: Partial<ForumDoubt>): Promise<ForumDoubt | undefined> {
-    const doubt = this.forumDoubts.get(id);
-    if (!doubt) return undefined;
-    
-    const updatedDoubt = { ...doubt, ...updates };
-    this.forumDoubts.set(id, updatedDoubt);
-    return updatedDoubt;
+    await this.initialized;
+    const operation = async (): Promise<ForumDoubt | undefined> => {
+      const doubts = await this.readDoubtsFromFile();
+      const index = doubts.findIndex((doubt) => doubt.id === id);
+      if (index === -1) return undefined;
+      
+      const updatedDoubt = { ...doubts[index], ...updates };
+      doubts[index] = updatedDoubt;
+      await this.writeDoubtsToFileInternal(doubts);
+      return updatedDoubt;
+    };
+    this.writeQueue = this.writeQueue.then(operation, operation);
+    return await this.writeQueue;
   }
 
   async getAllForumDoubts(): Promise<ForumDoubt[]> {
-    return Array.from(this.forumDoubts.values());
+    return await this.readDoubtsFromFile();
   }
 }
 

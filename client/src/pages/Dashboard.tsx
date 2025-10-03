@@ -9,10 +9,12 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { User, MapPin, Building2, Mail, MessageSquare, CheckCircle2, Clock, Loader2 } from "lucide-react";
+import { User, MapPin, Building2, Mail, MessageSquare, CheckCircle2, Clock, Loader2, BookOpen, FileText, Video } from "lucide-react";
 import { committeeGroups } from "@/data/committees";
 import { Link } from "wouter";
 import type { ForumDoubt } from "@shared/schema";
+import { committeeResources } from "@/data/resources";
+import { Separator } from "@/components/ui/separator";
 
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
@@ -23,6 +25,11 @@ export default function Dashboard() {
   const { data: myDoubts, isLoading: doubtsLoading } = useQuery<ForumDoubt[]>({
     queryKey: ["/api/forum/doubts/user/me"],
     enabled: !!user,
+  });
+
+  const { data: committeeDoubts, isLoading: committeeDoubtsLoading } = useQuery<ForumDoubt[]>({
+    queryKey: [`/api/forum/doubts/${user?.committee}`],
+    enabled: !!user?.committee,
   });
 
   const createDoubtMutation = useMutation({
@@ -40,6 +47,7 @@ export default function Dashboard() {
       });
       setNewQuestion("");
       queryClient.invalidateQueries({ queryKey: ["/api/forum/doubts/user/me"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/forum/doubts/${user?.committee}`] });
     },
     onError: () => {
       toast({
@@ -67,6 +75,11 @@ export default function Dashboard() {
     .flatMap(group => group.committees)
     .find(committee => committee.name === user.committee);
 
+  const committeeResourcesList = [
+    ...(committeeResources["All Committees"] || []),
+    ...(committeeResources[user.committee] || [])
+  ];
+
   const handleSubmitQuestion = () => {
     if (!newQuestion.trim()) {
       toast({
@@ -85,20 +98,24 @@ export default function Dashboard() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.6 }}
-      className="py-20 bg-gradient-to-b from-background to-muted/20 min-h-screen"
+      className="py-20 bg-gradient-to-br from-background via-muted/10 to-primary/5 min-h-screen"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
+        <motion.div 
+          initial={{ y: -20 }}
+          animate={{ y: 0 }}
+          className="text-center mb-12"
+        >
+          <h1 className="font-serif text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-4">
             My Dashboard
           </h1>
-          <p className="text-lg text-muted-foreground">
-            Welcome back, Delegate!
+          <p className="text-xl text-muted-foreground">
+            Welcome back, Delegate! 🌟
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <Card className="bg-card border-border" data-testid="card-user-details">
+          <Card className="bg-card border-border shadow-lg hover:shadow-xl transition-shadow" data-testid="card-user-details">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="w-5 h-5" />
@@ -136,7 +153,7 @@ export default function Dashboard() {
           </Card>
 
           {userCommittee && (
-            <Card className="bg-card border-border" data-testid="card-committee-info">
+            <Card className="bg-card border-border shadow-lg hover:shadow-xl transition-shadow" data-testid="card-committee-info">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="w-5 h-5" />
@@ -170,69 +187,171 @@ export default function Dashboard() {
           )}
         </div>
 
-        <Card className="bg-card border-border" data-testid="card-forum">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <Card className="bg-card border-border shadow-lg hover:shadow-xl transition-shadow" data-testid="card-forum">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MessageSquare className="w-5 h-5" />
+                Ask a Question
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Ask questions to your committee chairs. Your questions will be moderated before appearing.
+                </p>
+                <Textarea
+                  placeholder="Type your question here..."
+                  value={newQuestion}
+                  onChange={(e) => setNewQuestion(e.target.value)}
+                  className="min-h-[100px] resize-none"
+                  data-testid="textarea-question"
+                />
+                <Button
+                  onClick={handleSubmitQuestion}
+                  disabled={createDoubtMutation.isPending}
+                  className="w-full"
+                  data-testid="button-submit-question"
+                >
+                  {createDoubtMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    "Submit Question"
+                  )}
+                </Button>
+              </div>
+
+              {doubtsLoading ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                </div>
+              ) : myDoubts && myDoubts.length > 0 ? (
+                <div className="space-y-4">
+                  <Separator />
+                  <h3 className="font-semibold text-lg">My Questions</h3>
+                  <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                    {myDoubts.map((doubt) => (
+                      <Card key={doubt.id} className="bg-muted/20" data-testid={`card-doubt-${doubt.id}`}>
+                        <CardContent className="pt-4 space-y-3">
+                          <div className="flex items-start justify-between gap-4">
+                            <p className="text-sm flex-1" data-testid="text-doubt-question">{doubt.question}</p>
+                            {doubt.isApproved ? (
+                              <Badge variant="outline" className="flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3" />
+                                Approved
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary" className="flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                Pending
+                              </Badge>
+                            )}
+                          </div>
+                          {doubt.response && (
+                            <div className="bg-primary/10 border-l-4 border-primary p-3 rounded">
+                              <p className="text-sm font-semibold mb-1">Response:</p>
+                              <p className="text-sm break-words whitespace-pre-wrap" data-testid="text-doubt-response">{doubt.response}</p>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <Separator />
+                  <p className="text-center text-muted-foreground py-8">No questions yet</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card border-border shadow-lg hover:shadow-xl transition-shadow" data-testid="card-resources">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5" />
+                Committee Resources
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Access study guides, templates, and videos for your committee.
+              </p>
+              
+              <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                {committeeResourcesList.map((category, idx) => {
+                  const IconComponent = category.icon;
+                  return (
+                    <Card key={idx} className="bg-muted/20 hover:bg-muted/30 transition-colors" data-testid={`card-resource-${idx}`}>
+                      <CardContent className="pt-4 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <IconComponent className="w-4 h-4 text-primary" />
+                          <h4 className="font-semibold text-sm">{category.title}</h4>
+                        </div>
+                        <p className="text-xs text-muted-foreground">{category.description}</p>
+                        <div className="space-y-1">
+                          {category.links.map((link, linkIdx) => {
+                            const LinkIcon = link.icon;
+                            return (
+                              <a
+                                key={linkIdx}
+                                href={link.href || "#"}
+                                className="flex items-center gap-2 text-xs text-primary hover:underline py-1"
+                                data-testid={`link-resource-${idx}-${linkIdx}`}
+                              >
+                                <LinkIcon className="w-3 h-3" />
+                                {link.text}
+                              </a>
+                            );
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+
+              <Link href={`/resources?committee=${encodeURIComponent(user.committee)}`}>
+                <Button variant="outline" className="w-full" data-testid="button-committee-resources">
+                  Show {user.committee} Resources
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="bg-card border-border shadow-lg hover:shadow-xl transition-shadow" data-testid="card-committee-forum">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MessageSquare className="w-5 h-5" />
-              Committee Forum
+              Committee Forum - Approved Questions & Responses
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Ask questions to your committee chairs. Your questions will be moderated before appearing.
-              </p>
-              <Textarea
-                placeholder="Type your question here..."
-                value={newQuestion}
-                onChange={(e) => setNewQuestion(e.target.value)}
-                className="min-h-[100px] resize-none"
-                data-testid="textarea-question"
-              />
-              <Button
-                onClick={handleSubmitQuestion}
-                disabled={createDoubtMutation.isPending}
-                data-testid="button-submit-question"
-              >
-                {createDoubtMutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  "Submit Question"
-                )}
-              </Button>
-            </div>
-
-            {doubtsLoading ? (
+          <CardContent className="space-y-4">
+            {committeeDoubtsLoading ? (
               <div className="flex justify-center py-8">
                 <Loader2 className="w-6 h-6 animate-spin text-primary" />
               </div>
-            ) : myDoubts && myDoubts.length > 0 ? (
+            ) : committeeDoubts && committeeDoubts.length > 0 ? (
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg">My Questions</h3>
-                {myDoubts.map((doubt) => (
-                  <Card key={doubt.id} className="bg-muted/20" data-testid={`card-doubt-${doubt.id}`}>
+                {committeeDoubts.map((doubt) => (
+                  <Card key={doubt.id} className="bg-gradient-to-r from-muted/20 to-muted/10 border-l-4 border-primary" data-testid={`card-committee-doubt-${doubt.id}`}>
                     <CardContent className="pt-6 space-y-3">
                       <div className="flex items-start justify-between gap-4">
-                        <p className="text-sm flex-1" data-testid="text-doubt-question">{doubt.question}</p>
-                        {doubt.isApproved ? (
-                          <Badge variant="outline" className="flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3" />
-                            Approved
-                          </Badge>
-                        ) : (
-                          <Badge variant="secondary" className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            Pending
-                          </Badge>
-                        )}
+                        <p className="font-medium text-base flex-1" data-testid="text-committee-doubt-question">{doubt.question}</p>
+                        <Badge variant="outline" className="flex items-center gap-1 bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300">
+                          <CheckCircle2 className="w-3 h-3" />
+                          Answered
+                        </Badge>
                       </div>
                       {doubt.response && (
-                        <div className="bg-primary/10 border-l-4 border-primary p-3 rounded">
-                          <p className="text-sm font-semibold mb-1">Response:</p>
-                          <p className="text-sm break-words whitespace-pre-wrap" data-testid="text-doubt-response">{doubt.response}</p>
+                        <div className="bg-primary/10 border-l-4 border-primary p-4 rounded-md">
+                          <p className="text-sm font-semibold mb-2 text-primary">Chair's Response:</p>
+                          <p className="text-sm break-words whitespace-pre-wrap leading-relaxed" data-testid="text-committee-doubt-response">{doubt.response}</p>
                         </div>
                       )}
                     </CardContent>
@@ -240,7 +359,11 @@ export default function Dashboard() {
                 ))}
               </div>
             ) : (
-              <p className="text-center text-muted-foreground py-8">No questions yet</p>
+              <div className="text-center py-12 space-y-2">
+                <MessageSquare className="w-12 h-12 mx-auto text-muted-foreground/50" />
+                <p className="text-muted-foreground">No approved questions yet for your committee</p>
+                <p className="text-sm text-muted-foreground">Be the first to ask a question!</p>
+              </div>
             )}
           </CardContent>
         </Card>
