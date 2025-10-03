@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 import Navigation from "@/components/Navigation";
 import LoadingOverlay from "@/components/LoadingOverlay";
@@ -16,6 +17,7 @@ import Resources from "@/pages/Resources";
 import Contact from "@/pages/Contact";
 import ExecutiveCommittee from "@/pages/ExecutiveCommittee"
 import ExecutiveBoard from "@/pages/ExecutiveBoard"
+import Dashboard from "@/pages/Dashboard";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -29,6 +31,7 @@ function Router() {
         <Route path="/contact" component={Contact} />
         <Route path="/executivecommittee" component={ExecutiveCommittee} />
         <Route path="/executiveboard" component={ExecutiveBoard} />
+        <Route path="/dashboard" component={Dashboard} />
         <Route component={NotFound} />
       </Switch>
     </AnimatePresence>
@@ -49,17 +52,19 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <div className="min-h-screen bg-background text-foreground">
-          <LoadingOverlay isVisible={isLoading} />
-          <Navigation />
-          <main className="pt-16">
-            <Router />
-          </main>
-          <Footer />
-        </div>
-        <Toaster />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <div className="min-h-screen bg-background text-foreground">
+            <LoadingOverlay isVisible={isLoading} />
+            <Navigation />
+            <main className="pt-16">
+              <Router />
+            </main>
+            <Footer />
+          </div>
+          <Toaster />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

@@ -71,11 +71,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Forum routes
   app.post("/api/forum/doubts", requireAuth, async (req, res) => {
     try {
-      const validatedData = insertForumDoubtSchema.parse(req.body);
-      const doubt = await storage.createForumDoubt({
-        ...validatedData,
+      const dataWithUserId = {
+        ...req.body,
         userId: req.session.userId!,
-      });
+      };
+      const validatedData = insertForumDoubtSchema.parse(dataWithUserId);
+      const doubt = await storage.createForumDoubt(validatedData);
       res.json(doubt);
     } catch (error) {
       res.status(400).json({ message: "Failed to create doubt" });
