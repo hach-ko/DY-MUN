@@ -22,21 +22,30 @@ export interface IStorage {
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<string, User>;
+  private usersFilePath: string;
   private doubtsFilePath: string;
   private writeQueue: Promise<any> = Promise.resolve();
   private initialized: Promise<void>;
 
   constructor() {
-    this.users = new Map();
+    this.usersFilePath = path.join(process.cwd(), "data", "users.json");
     this.doubtsFilePath = path.join(process.cwd(), "data", "forumDoubts.json");
-    this.seedUsers();
     this.initialized = this.initializeStorage();
   }
 
   private async initializeStorage() {
     try {
-      await fs.mkdir(path.dirname(this.doubtsFilePath), { recursive: true });
+      const dataDir = path.join(process.cwd(), "data");
+      await fs.mkdir(dataDir, { recursive: true });
+      
+      try {
+        await fs.access(this.usersFilePath);
+        const content = await fs.readFile(this.usersFilePath, "utf-8");
+        JSON.parse(content);
+      } catch (error) {
+        await this.seedUsers();
+      }
+      
       try {
         await fs.access(this.doubtsFilePath);
         const content = await fs.readFile(this.doubtsFilePath, "utf-8");
@@ -54,6 +63,29 @@ export class MemStorage implements IStorage {
       }
     } catch (error) {
       console.error("Failed to initialize storage:", error);
+      throw error;
+    }
+  }
+
+  private async readUsersFromFile(): Promise<User[]> {
+    await this.initialized;
+    try {
+      const data = await fs.readFile(this.usersFilePath, "utf-8");
+      const users = JSON.parse(data);
+      return users;
+    } catch (error) {
+      console.error("Failed to read users from file:", error);
+      return [];
+    }
+  }
+
+  private async writeUsersToFileInternal(users: User[]): Promise<void> {
+    try {
+      const tempPath = `${this.usersFilePath}.tmp`;
+      await fs.writeFile(tempPath, JSON.stringify(users, null, 2), "utf-8");
+      await fs.rename(tempPath, this.usersFilePath);
+    } catch (error) {
+      console.error("Failed to write users to file:", error);
       throw error;
     }
   }
@@ -82,6 +114,24 @@ export class MemStorage implements IStorage {
   }
 
   private async seedUsers() {
+    const extractCommittee = (preference: string): string => {
+      if (!preference) return "General";
+      if (preference.includes("CTC")) return "CTC";
+      if (preference.includes("UNOOSA")) return "UNOOSA";
+      if (preference.includes("SDG 5")) return "SDG 5";
+      if (preference.includes("ECOFIN")) return "ECOFIN";
+      if (preference.includes("UNSC")) return "UNSC";
+      if (preference.includes("ICJ")) return "ICJ";
+      if (preference.includes("AIPPM")) return "AIPPM";
+      if (preference.includes("HCC")) return "HCC";
+      if (preference.includes("IP:") || preference.includes("International Press")) return "IP";
+      if (preference.includes("IPL")) return "IPL";
+      if (preference.includes("FIFA")) return "FIFA";
+      if (preference.includes("Disney")) return "Disney";
+      if (preference.includes("Harry Potter")) return "Harry Potter";
+      return "General";
+    };
+
     const placeholderUsers: InsertUser[] = [
       {
         idNumber: "DYMUN001",
@@ -523,36 +573,383 @@ export class MemStorage implements IStorage {
         password: "Veer#2025MUN",
         committee: "ICJ",
         institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN064",
+        gmail: "hrehaan.vora@bombayscottish.in",
+        password: "Hrehaan#2025MUN",
+        committee: extractCommittee("CTC(Counter-Terrorism Committee):Deliberating Strategies to Disrupt Terrorist Financing Networks and Curb the Use of Illicit Financial Channels"),
+        institution: "Bombay Scottish School Mahim(BSSM)"
+      },
+      {
+        idNumber: "DYMUN065",
+        gmail: "nmadhiwalla@gmail.com",
+        password: "Vidhi#2025MUN",
+        committee: extractCommittee("UNOOSA(United Nations Office for Outer Space Affairs): Global Framework to Prevent the Weaponization of Space-Based Technologies and Aggressive Militarization"),
+        institution: "Don Bosco"
+      },
+      {
+        idNumber: "DYMUN066",
+        gmail: "nadarmahalakshmi15@gmail.com",
+        password: "Mahalakshmi#2025MUN",
+        committee: extractCommittee("ICJ (International Court of Justice): Application of the Convention on the Prevention and Punishment of the Crime and Genocide in Sudan (Sudan vs United Arab Emirates)"),
+        institution: "DON BOSCO, Navi Mumbai, Nerul"
+      },
+      {
+        idNumber: "DYMUN067",
+        gmail: "ayush.dhingra@bombayscottish.in",
+        password: "Ayush#2025MUN",
+        committee: extractCommittee("UNSC(United Nations Security Council): Role of Non State Actors and Private Military Security Companies in Conflict Zones"),
+        institution: "Bombay Scottish School Mahim"
+      },
+      {
+        idNumber: "DYMUN068",
+        gmail: "kritika.dhanda@bombayscottish.in",
+        password: "Kritika#2025MUN",
+        committee: extractCommittee("ICJ (International Court of Justice): Application of the Convention on the Prevention and Punishment of the Crime and Genocide in Sudan (Sudan vs United Arab Emirates)"),
+        institution: "Bombay Scottish School Mahim"
+      },
+      {
+        idNumber: "DYMUN069",
+        gmail: "adityadalal542@gmail.com",
+        password: "Aditya#2025MUN",
+        committee: extractCommittee("UNSC(United Nations Security Council): Role of Non State Actors and Private Military Security Companies in Conflict Zones"),
+        institution: "Fr agnel"
+      },
+      {
+        idNumber: "DYMUN070",
+        gmail: "jaykulkarni1811@gmail.com",
+        password: "Jay#2025MUN",
+        committee: extractCommittee("UNOOSA(United Nations Office for Outer Space Affairs): Global Framework to Prevent the Weaponization of Space-Based Technologies and Aggressive Militarization"),
+        institution: "Don bosco senior secondary school,nerul(navi mumbai)"
+      },
+      {
+        idNumber: "DYMUN071",
+        gmail: "Anamika.singh@thyssenkrupp.com",
+        password: "Aditya#2025MUN",
+        committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All."),
+        institution: "NA"
+      },
+      {
+        idNumber: "DYMUN072",
+        gmail: "bhargavkavali.b@gmail.com",
+        password: "Bhargav#2025MUN",
+        committee: extractCommittee("ECOFIN(Economic and Financial Committee): Dollar Dominance: Deliberating on shifting towards a multi-currency system for trading."),
+        institution: "Mahatma Junior College, New Panvel"
+      },
+      {
+        idNumber: "DYMUN073",
+        gmail: "Ses.b363601@gmail.com",
+        password: "Anay#2025MUN",
+        committee: extractCommittee("UNSC(United Nations Security Council): Role of Non State Actors and Private Military Security Companies in Conflict Zones"),
+        institution: "Apeejay School, Nerul"
+      },
+      {
+        idNumber: "DYMUN074",
+        gmail: "lekha.vispute9@gmail.com",
+        password: "Lekha#2025MUN",
+        committee: extractCommittee("HCC (Historical Crisis Committee): Accountability for Nuclear Brinkmanship During the Cold War considering the Cuban Missile Crisis, Berlin standoffs, and general US-USSR nuclear threats. (Freeze date: February 15, 1989)"),
+        institution: "Don Bosco Nerul"
+      },
+      {
+        idNumber: "DYMUN075",
+        gmail: "meezan2101@gmail.com",
+        password: "Mohammad#2025MUN",
+        committee: extractCommittee("UNSC(United Nations Security Council): Role of Non State Actors and Private Military Security Companies in Conflict Zones"),
+        institution: "Presentation Convent School,Nerul"
+      },
+      {
+        idNumber: "DYMUN076",
+        gmail: "ipshitashriv25@gmail.com",
+        password: "Ipshita#2025MUN",
+        committee: extractCommittee("AIPPM(All India Political Party Meet): Deliberation on Enhancing Judicial Efficiency and Accountability in India whilst Balancing Legal Reform, Transparency, and Public Trust"),
+        institution: "NHPS, Panvel"
+      },
+      {
+        idNumber: "DYMUN077",
+        gmail: "lakshyana21@gmail.com",
+        password: "Laksh#2025MUN",
+        committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All."),
+        institution: "Don bosco School Nerul,Navimumbai"
+      },
+      {
+        idNumber: "DYMUN078",
+        gmail: "dshah8143@gmail.com",
+        password: "Dia#2025MUN",
+        committee: extractCommittee("UNSC(United Nations Security Council): Role of Non State Actors and Private Military Security Companies in Conflict Zones"),
+        institution: "Goldcrest International"
+      },
+      {
+        idNumber: "DYMUN079",
+        gmail: "pragyashaw19@gmail.com",
+        password: "Pragya#2025MUN",
+        committee: extractCommittee("ECOFIN(Economic and Financial Committee): Dollar Dominance: Deliberating on shifting towards a multi-currency system for trading."),
+        institution: "Allen"
+      },
+      {
+        idNumber: "DYMUN080",
+        gmail: "seethal.sunnyk@gmail.com",
+        password: "Esther#2025MUN",
+        committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All."),
+        institution: "Don bosco senior secondry nerul"
+      },
+      {
+        idNumber: "DYMUN081",
+        gmail: "ssamriddhi944@gmail.com",
+        password: "Samriddhi#2025MUN",
+        committee: extractCommittee("AIPPM(All India Political Party Meet): Deliberation on Enhancing Judicial Efficiency and Accountability in India whilst Balancing Legal Reform, Transparency, and Public Trust"),
+        institution: "Goldcrest High, Vashi"
+      },
+      {
+        idNumber: "DYMUN082",
+        gmail: "MANASVISKOLI@GMAIL.COM",
+        password: "Manasvi#2025MUN",
+        committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All."),
+        institution: "DON BOSCO SENIOR SECONDARY SCHOOL"
+      },
+      {
+        idNumber: "DYMUN083",
+        gmail: "aranrajroy7@gmail.com",
+        password: "Aryanraj#2025MUN",
+        committee: extractCommittee("IPL(Indian Premier League): Mega Auction"),
+        institution: "Delhi Public School Panvel"
+      },
+      {
+        idNumber: "DYMUN084",
+        gmail: "mahit.c.nigam@gmail.com",
+        password: "Mahit#2025MUN",
+        committee: extractCommittee("UNSC(United Nations Security Council): Role of Non State Actors and Private Military Security Companies in Conflict Zones"),
+        institution: "Goldcrest International"
+      },
+      {
+        idNumber: "DYMUN085",
+        gmail: "2029sarah.i@dypisnerul.in",
+        password: "Sarah#2025MUN",
+        committee: extractCommittee("ICJ (International Court of Justice): Application of the Convention on the Prevention and Punishment of the Crime and Genocide in Sudan (Sudan vs United Arab Emirates)"),
+        institution: "D y patil international school"
+      },
+      {
+        idNumber: "DYMUN086",
+        gmail: "2030aryash.g@dypisnerul.in",
+        password: "Aryash#2025MUN",
+        committee: extractCommittee("IPL(Indian Premier League): Mega Auction"),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN087",
+        gmail: "2028rhea.m@dypisnerul.in",
+        password: "Rhea#2025MUN",
+        committee: extractCommittee("ECOFIN(Economic and Financial Committee): Dollar Dominance: Deliberating on shifting towards a multi-currency system for trading."),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN088",
+        gmail: "aviagarwal29@gmail.com",
+        password: "Avi#2025MUN",
+        committee: extractCommittee("SDG 5 (Sustainable Development Goal 5) - Gender Equality: Addressing gender-based disparities in Representation in Political Institutions and Decision-Making Processes."),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN089",
+        gmail: "2034kaira.a@dypisnerul.in",
+        password: "Kaira#2025MUN",
+        committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All"),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN090",
+        gmail: "2033adhiyajna.p@dypisnerul.in",
+        password: "Adhiyajna#2025MUN",
+        committee: extractCommittee("FIFA: Combating Discrimination and Social Inequality in Global Football."),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN091",
+        gmail: "2035aashritha.p@dypisnerul.in",
+        password: "Aashritha#2025MUN",
+        committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All"),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN092",
+        gmail: "2030amatullah.h@dypisnerul.in",
+        password: "Amatullah#2025MUN",
+        committee: extractCommittee("SDG 5 (Sustainable Development Goal 5) - Gender Equality: Addressing gender-based disparities in Representation in Political Institutions and Decision-Making Processes."),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN093",
+        gmail: "2034hriti.b@dypisnerul.in",
+        password: "Hriti#2025MUN",
+        committee: extractCommittee("Harry Potter: Rebuilding the Wizarding World in the Aftermath of the Battle of Hogwarts: Addressing Infrastructure, Governance, and Social Healing."),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN094",
+        gmail: "2034krupa.m@dypisnerul.in",
+        password: "Krupa#2025MUN",
+        committee: extractCommittee("Harry Potter: Rebuilding the Wizarding World in the Aftermath of the Battle of Hogwarts: Addressing Infrastructure, Governance, and Social Healing."),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN095",
+        gmail: "2035sanvika.p@dypisnerul.in",
+        password: "Sanvika#2025MUN",
+        committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All"),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN096",
+        gmail: "2035gaurishta.p@dypisnerul.in",
+        password: "Gaurishta#2025MUN",
+        committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All"),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN097",
+        gmail: "2033alaina.m@dypisnerul.in",
+        password: "Alaina#2025MUN",
+        committee: extractCommittee("Harry Potter: Rebuilding the Wizarding World in the Aftermath of the Battle of Hogwarts: Addressing Infrastructure, Governance, and Social Healing."),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN098",
+        gmail: "2030ayansh.g@gmail.com",
+        password: "Ayansh#2025MUN",
+        committee: extractCommittee("IPL(Indian Premier League): Mega Auction"),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN099",
+        gmail: "naishaamarahuja@gmail.com",
+        password: "Naisha#2025MUN",
+        committee: extractCommittee("Harry Potter: Rebuilding the Wizarding World in the Aftermath of the Battle of Hogwarts: Addressing Infrastructure, Governance, and Social Healing."),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN100",
+        gmail: "2033anaia.g@dypisnerul.in",
+        password: "Anaia#2025MUN",
+        committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All"),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN101",
+        gmail: "2031tanishka.b@dypisnerul.in",
+        password: "Tanishka#2025MUN",
+        committee: extractCommittee("SDG 5 (Sustainable Development Goal 5) - Gender Equality: Addressing gender-based disparities in Representation in Political Institutions and Decision-Making Processes."),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN102",
+        gmail: "2032naman.t@dypisnerul.in",
+        password: "Naman#2025MUN",
+        committee: extractCommittee("UNOOSA(United Nations Office for Outer Space Affairs): Global Framework to Prevent the Weaponization of Space-Based Technologies and Aggressive Militarization"),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN103",
+        gmail: "2034mira.s@dypisnerul.in",
+        password: "Mira#2025MUN",
+        committee: extractCommittee("Harry Potter: Rebuilding the Wizarding World in the Aftermath of the Battle of Hogwarts: Addressing Infrastructure, Governance, and Social Healing."),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN104",
+        gmail: "2035ananya.p@dypisnerul.in",
+        password: "Ananya#2025MUN",
+        committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All"),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN105",
+        gmail: "2033inaaya.a@dypisnerul.in",
+        password: "Inaaya#2025MUN",
+        committee: extractCommittee("Harry Potter: Rebuilding the Wizarding World in the Aftermath of the Battle of Hogwarts: Addressing Infrastructure, Governance, and Social Healing."),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN106",
+        gmail: "2034aavishi.g@dypisnerul.in",
+        password: "Aavishi#2025MUN",
+        committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All"),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN107",
+        gmail: "mindyourownbuissness321@gmail.com",
+        password: "Zidan#2025MUN",
+        committee: extractCommittee("CTC(Counter-Terrorism Committee):Deliberating Strategies to Disrupt Terrorist Financing Networks and Curb the Use of Illicit Financial Channels"),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN108",
+        gmail: "2031spruha.p@dypisnerul.in",
+        password: "Spruha#2025MUN",
+        committee: extractCommittee("UNOOSA(United Nations Office for Outer Space Affairs): Global Framework to Prevent the Weaponization of Space-Based Technologies and Aggressive Militarization"),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN109",
+        gmail: "2033meet.b@dypisnerul.in",
+        password: "Meet#2025MUN",
+        committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All"),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN110",
+        gmail: "2032angelica.t@dypisnerul.in",
+        password: "Angelica#2025MUN",
+        committee: extractCommittee("SDG 5 (Sustainable Development Goal 5) - Gender Equality: Addressing gender-based disparities in Representation in Political Institutions and Decision-Making Processes."),
+        institution: "D Y Patil International School, Nerul"
+      },
+      {
+        idNumber: "DYMUN111",
+        gmail: "2034alicia.s@dypisnerul.in",
+        password: "Alicia#2025MUN",
+        committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All"),
+        institution: "D Y Patil International School, Nerul"
       }
     ];
 
+    const users: User[] = [];
     for (const userData of placeholderUsers) {
-      await this.createUser(userData);
+      const id = randomUUID();
+      const hashedPassword = await bcrypt.hash(userData.password, 10);
+      const user: User = { ...userData, password: hashedPassword, id };
+      users.push(user);
     }
+    await this.writeUsersToFileInternal(users);
   }
 
   async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+    const users = await this.readUsersFromFile();
+    return users.find(user => user.id === id);
   }
 
   async getUserByGmail(gmail: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.gmail === gmail,
-    );
+    const users = await this.readUsersFromFile();
+    return users.find(user => user.gmail === gmail);
   }
 
   async getUserByIdNumber(idNumber: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.idNumber === idNumber,
-    );
+    const users = await this.readUsersFromFile();
+    return users.find(user => user.idNumber === idNumber);
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const hashedPassword = await bcrypt.hash(insertUser.password, 10);
-    const user: User = { ...insertUser, password: hashedPassword, id };
-    this.users.set(id, user);
-    return user;
+    await this.initialized;
+    const operation = async (): Promise<User> => {
+      const users = await this.readUsersFromFile();
+      const id = randomUUID();
+      const hashedPassword = await bcrypt.hash(insertUser.password, 10);
+      const user: User = { ...insertUser, password: hashedPassword, id };
+      users.push(user);
+      await this.writeUsersToFileInternal(users);
+      return user;
+    };
+    this.writeQueue = this.writeQueue.then(operation, operation);
+    return await this.writeQueue;
   }
 
   async createForumDoubt(insertDoubt: InsertForumDoubt): Promise<ForumDoubt> {
