@@ -61,16 +61,7 @@ export default function Footer() {
 
         <div className="border-t border-border mt-8 pt-8 text-center">
           <p className="text-muted-foreground">
-            © 2025 DYMUN. All rights reserved. | Made with Love by{" "}
-            <a
-              href="https://www.linkedin.com/in/dhruvsraina"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:text-primary/80 font-semibold transition-colors duration-200 underline decoration-primary/50 hover:decoration-primary"
-              data-testid="footer-developer-link"
-            >
-              Dhruv Raina
-            </a>
+            © 2025 DYMUN. All rights reserved.
           </p>
         </div>
       </div>
