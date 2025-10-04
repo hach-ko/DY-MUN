@@ -18,12 +18,12 @@ export default function Navigation() {
 
   const navItems = [
     { href: "/", label: "Home" },
-    { href: "/about", label: "About Us" },
+    { href: "/about", label: "About" },
     { href: "/committees", label: "Committees" },
     { href: "/resources", label: "Resources" },
     { href: "/contact", label: "Contact" },
-    { href: "/executivecommittee", label: "Executive Committee" },
-    { href: "/executiveboard", label: "Executive Board" },
+    { href: "/executivecommittee", label: "Exec Committee" },
+    { href: "/executiveboard", label: "Exec Board" },
   ];
 
   const isActive = (href: string) => {
@@ -48,21 +48,21 @@ export default function Navigation() {
 
   return (
     <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-md border-b border-border z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      <div className="w-full px-3 sm:px-4 lg:px-6">
+        <div className="flex justify-between items-center h-16 gap-2">
           <Link href="/" data-testid="logo-link" className="flex-shrink-0">
-            <h1 className="text-xl md:text-2xl font-bold text-primary cursor-pointer font-poppins hover:opacity-80 transition-opacity">
+            <h1 className="text-lg md:text-xl font-bold text-primary cursor-pointer font-poppins hover:opacity-80 transition-opacity">
               DYMUN
             </h1>
           </Link>
 
-          <div className="hidden lg:flex items-center justify-center flex-1 mx-8">
-            <div className="flex items-center space-x-1">
+          <div className="hidden lg:flex items-center justify-center flex-1 overflow-x-auto">
+            <div className="flex items-center gap-0.5">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`nav-link px-3 py-2 text-sm font-medium transition-all duration-200 rounded-md whitespace-nowrap ${
+                  className={`nav-link px-2 py-2 text-xs font-medium transition-all duration-200 rounded-md whitespace-nowrap ${
                     isActive(item.href)
                       ? "text-primary bg-primary/10"
                       : "text-foreground hover:text-primary hover:bg-primary/5"
@@ -75,29 +75,29 @@ export default function Navigation() {
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center space-x-3 flex-shrink-0">
+          <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
             {user ? (
               <>
                 <Link
                   href="/dashboard"
-                  className={`flex items-center gap-2 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-md whitespace-nowrap ${
+                  className={`flex items-center gap-1 px-2 py-2 text-xs font-medium transition-all duration-200 rounded-md whitespace-nowrap ${
                     isActive("/dashboard")
                       ? "text-primary bg-primary/10"
                       : "text-foreground hover:text-primary hover:bg-primary/5"
                   }`}
                   data-testid="nav-dashboard"
                 >
-                  <User size={16} />
+                  <User size={14} />
                   Dashboard
                 </Link>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={logout}
-                  className="flex items-center gap-2 h-9 whitespace-nowrap"
+                  className="flex items-center gap-1 h-8 text-xs px-2 whitespace-nowrap"
                   data-testid="button-logout-desktop"
                 >
-                  <LogOut size={16} />
+                  <LogOut size={14} />
                   Logout
                 </Button>
               </>
@@ -106,7 +106,7 @@ export default function Navigation() {
                 variant="outline"
                 size="sm"
                 onClick={() => setIsLoginOpen(true)}
-                className="h-9 whitespace-nowrap"
+                className="h-8 text-xs px-3 whitespace-nowrap"
                 data-testid="button-login-desktop"
               >
                 Login
@@ -116,10 +116,10 @@ export default function Navigation() {
               href="https://docs.google.com/forms/d/e/1FAIpQLSeMv3_996f1ifqRyloEstNA5F-BPhCszbtgJ-ksbORin-f_UQ/viewform"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-primary text-primary-foreground px-5 py-2 rounded-md text-sm font-semibold hover:bg-primary/90 transition-all duration-200 shadow-sm hover:shadow-md whitespace-nowrap"
+              className="bg-primary text-primary-foreground px-3 py-2 rounded-md text-xs font-semibold hover:bg-primary/90 transition-all duration-200 shadow-sm hover:shadow-md whitespace-nowrap"
               data-testid="register-button-desktop"
             >
-              Register Now
+              Register
             </a>
           </div>
 
@@ -155,7 +155,7 @@ export default function Navigation() {
             className="lg:hidden bg-background border-t border-border shadow-lg"
             data-testid="mobile-menu"
           >
-            <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
+            <div className="px-4 py-4 space-y-1">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
