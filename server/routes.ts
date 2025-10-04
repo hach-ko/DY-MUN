@@ -59,11 +59,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else if (gmail) {
         user = await storage.getUserByGmail(gmail as string);
       } else {
-        return res.status(400).json({ message: "Please provide userId or gmail parameter, or login first" });
+        return res.json({ user: null });
       }
       
       if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        return res.json({ user: null });
       }
 
       res.json({ user });
