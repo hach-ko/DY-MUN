@@ -57,7 +57,7 @@ function App() {
           <div className="min-h-screen bg-background text-foreground">
             <LoadingOverlay isVisible={isLoading} />
             <Navigation />
-            <main className="pt-16">
+            <main className="pt-16 md:pt-14">
               <Router />
             </main>
             <Footer />

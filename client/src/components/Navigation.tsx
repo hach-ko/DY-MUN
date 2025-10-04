@@ -47,11 +47,11 @@ export default function Navigation() {
 
   return (
     <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
-        <div className="flex justify-between items-center h-14">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6">
+        <div className="flex justify-between items-center h-16 md:h-14">
           {/* Logo */}
           <Link href="/" data-testid="logo-link">
-            <h1 className="text-lg font-bold text-primary cursor-pointer font-poppins">
+            <h1 className="text-xl md:text-lg font-bold text-primary cursor-pointer font-poppins">
               DYMUN
             </h1>
           </Link>
@@ -113,10 +113,11 @@ export default function Navigation() {
           <div className="md:hidden">
             <button
               onClick={toggleMobileMenu}
-              className="text-foreground hover:text-primary focus:outline-none focus:text-primary"
+              className="text-foreground hover:text-primary focus:outline-none focus:text-primary p-2 -mr-2 active:bg-accent/50 rounded-md transition-colors"
               data-testid="mobile-menu-button"
+              aria-label="Toggle menu"
             >
-              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
@@ -130,62 +131,74 @@ export default function Navigation() {
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "tween", duration: 0.3 }}
-            className="md:hidden bg-card border-t border-border fixed top-14 left-0 w-full h-screen z-40"
+            className="md:hidden bg-card/98 backdrop-blur-sm border-t border-border fixed top-16 left-0 w-full h-[calc(100vh-4rem)] z-40 overflow-y-auto"
             data-testid="mobile-menu"
           >
-            <div className="px-3 pt-2 pb-3 space-y-1">
+            <div className="px-4 pt-4 pb-6 space-y-2">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={closeMobileMenu}
-                  className="text-foreground hover:text-primary block px-2 py-1 text-sm font-medium"
+                  className={`block px-4 py-3 text-base font-medium rounded-lg transition-all active:scale-95 ${
+                    isActive(item.href)
+                      ? "bg-primary/10 text-primary"
+                      : "text-foreground hover:bg-accent/50 active:bg-accent"
+                  }`}
                   data-testid={`mobile-nav-${item.label.toLowerCase().replace(" ", "-")}`}
                 >
                   {item.label}
                 </Link>
               ))}
-              {user ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    onClick={closeMobileMenu}
-                    className="text-foreground hover:text-primary block px-2 py-1 text-sm font-medium flex items-center gap-2"
-                    data-testid="mobile-nav-dashboard"
-                  >
-                    <User size={16} />
-                    Dashboard
-                  </Link>
+              
+              <div className="pt-2 border-t border-border mt-3">
+                {user ? (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      onClick={closeMobileMenu}
+                      className={`flex items-center gap-3 px-4 py-3 text-base font-medium rounded-lg transition-all active:scale-95 ${
+                        isActive("/dashboard")
+                          ? "bg-primary/10 text-primary"
+                          : "text-foreground hover:bg-accent/50 active:bg-accent"
+                      }`}
+                      data-testid="mobile-nav-dashboard"
+                    >
+                      <User size={20} />
+                      Dashboard
+                    </Link>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        logout();
+                        closeMobileMenu();
+                      }}
+                      className="w-full mt-3 h-12 flex items-center gap-3 justify-center text-base"
+                      data-testid="button-logout-mobile"
+                    >
+                      <LogOut size={20} />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
                   <Button
-                    variant="outline"
                     onClick={() => {
-                      logout();
+                      setIsLoginOpen(true);
                       closeMobileMenu();
                     }}
-                    className="w-full mt-2 flex items-center gap-2 justify-center"
-                    data-testid="button-logout-mobile"
+                    className="w-full h-12 text-base"
+                    data-testid="button-login-mobile"
                   >
-                    <LogOut size={16} />
-                    Logout
+                    Login
                   </Button>
-                </>
-              ) : (
-                <Button
-                  onClick={() => {
-                    setIsLoginOpen(true);
-                    closeMobileMenu();
-                  }}
-                  className="w-full mt-2"
-                  data-testid="button-login-mobile"
-                >
-                  Login
-                </Button>
-              )}
+                )}
+              </div>
+              
               <a
                 href="https://docs.google.com/forms/d/e/1FAIpQLSeMv3_996f1ifqRyloEstNA5F-BPhCszbtgJ-ksbORin-f_UQ/viewform"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-primary text-primary-foreground block px-4 py-2 rounded-md text-sm font-medium hover:bg-accent transition-colors duration-200 mt-3"
+                className="bg-primary text-primary-foreground flex items-center justify-center h-12 px-6 rounded-lg text-base font-semibold hover:bg-primary/90 active:scale-95 transition-all mt-4"
                 data-testid="register-button-mobile"
               >
                 Register Now
