@@ -42,7 +42,9 @@ export default function Navigation() {
 
   const handleLoginSuccess = async () => {
     await login();
-    setLocation("/dashboard");
+    setTimeout(() => {
+      setLocation("/dashboard");
+    }, 100);
   };
 
   return (
