@@ -39,6 +39,11 @@ export default function Navigation() {
     setIsMobileMenuOpen(false);
   };
 
+  const handleLoginSuccess = async () => {
+    await login();
+    setLocation("/dashboard");
+  };
+
   return (
     <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-md border-b border-border z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,7 +59,7 @@ export default function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative nav-link px-3 py-2 text-sm font-medium transition-all duration-200 rounded-md ${
+                className={`nav-link px-3 py-2 text-sm font-medium transition-all duration-200 rounded-md ${
                   isActive(item.href)
                     ? "text-primary bg-primary/10"
                     : "text-foreground hover:text-primary hover:bg-primary/5"
@@ -62,14 +67,6 @@ export default function Navigation() {
                 data-testid={`nav-${item.label.toLowerCase().replace(" ", "-")}`}
               >
                 {item.label}
-                {isActive(item.href) && (
-                  <motion.div
-                    layoutId="activeNav"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
-                    initial={false}
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
               </Link>
             ))}
           </div>
@@ -122,7 +119,16 @@ export default function Navigation() {
             </a>
           </div>
 
-          <div className="lg:hidden">
+          <div className="lg:hidden flex items-center gap-3">
+            {user && (
+              <Link
+                href="/dashboard"
+                className="text-foreground hover:text-primary transition-colors"
+                data-testid="mobile-dashboard-icon"
+              >
+                <User size={20} />
+              </Link>
+            )}
             <button
               onClick={toggleMobileMenu}
               className="text-foreground hover:text-primary focus:outline-none transition-colors p-2"
@@ -223,10 +229,7 @@ export default function Navigation() {
       <LoginDialog 
         open={isLoginOpen} 
         onOpenChange={setIsLoginOpen}
-        onLoginSuccess={async () => {
-          await login();
-          setLocation("/dashboard");
-        }}
+        onLoginSuccess={handleLoginSuccess}
       />
     </nav>
   );

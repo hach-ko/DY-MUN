@@ -37,14 +37,17 @@ export default function LoginDialog({ open, onOpenChange, onLoginSuccess }: Logi
       const response = await apiRequest("POST", "/api/auth/login", { gmail, password });
 
       if (response.ok) {
-        toast({
-          title: "Login successful",
-          description: "Welcome to DYMUN!",
-        });
-        onLoginSuccess();
         onOpenChange(false);
         setGmail("");
         setPassword("");
+        
+        await onLoginSuccess();
+        
+        toast({
+          title: "Login successful",
+          description: "Welcome to DYMUN!",
+          duration: 2000,
+        });
       } else {
         const error = await response.json();
         toast({
