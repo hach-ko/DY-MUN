@@ -7,7 +7,7 @@ import LoginDialog from "./LoginDialog";
 import { Button } from "@/components/ui/button";
 
 export default function Navigation() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const { user, logout, login } = useAuth();
@@ -223,7 +223,10 @@ export default function Navigation() {
       <LoginDialog 
         open={isLoginOpen} 
         onOpenChange={setIsLoginOpen}
-        onLoginSuccess={login}
+        onLoginSuccess={async () => {
+          await login();
+          setLocation("/dashboard");
+        }}
       />
     </nav>
   );
