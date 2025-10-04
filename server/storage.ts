@@ -905,7 +905,7 @@ export class MemStorage implements IStorage {
       {
         idNumber: "DYMUN111",
         gmail: "2034alicia.s@dypisnerul.in",
-        password: "Alicia#2025MUN",
+        password: "Alicia2025MUN",
         committee: extractCommittee("Disney: Regulating the Use of Magic: Should Magical Abilities Be Governed by Law or Freely Practiced by All"),
         institution: "D Y Patil International School, Nerul"
       }
