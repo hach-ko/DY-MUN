@@ -22,8 +22,8 @@ export default function Navigation() {
     { href: "/committees", label: "Committees" },
     { href: "/resources", label: "Resources" },
     { href: "/contact", label: "Contact" },
-    { href: "/executivecommittee", label: "Exec Committee" },
-    { href: "/executiveboard", label: "Exec Board" },
+    { href: "/executivecommittee", label: "Executive Committee" },
+    { href: "/executiveboard", label: "Executive Board" },
   ];
 
   const isActive = (href: string) => {
@@ -62,10 +62,10 @@ export default function Navigation() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`relative nav-link px-2 py-2 text-xs font-medium transition-all duration-200 rounded-md whitespace-nowrap ${
+                  className={`relative px-2 py-2 text-xs font-medium transition-colors duration-200 rounded-md whitespace-nowrap ${
                     isActive(item.href)
-                      ? "text-primary bg-primary/10"
-                      : "text-foreground hover:text-primary hover:bg-primary/5"
+                      ? "text-primary"
+                      : "text-foreground hover:text-primary"
                   }`}
                   data-testid={`nav-${item.label.toLowerCase().replace(" ", "-")}`}
                 >
@@ -88,10 +88,10 @@ export default function Navigation() {
               <>
                 <Link
                   href="/dashboard"
-                  className={`flex items-center gap-1 px-2 py-2 text-xs font-medium transition-all duration-200 rounded-md whitespace-nowrap ${
+                  className={`flex items-center gap-1 px-2 py-2 text-xs font-medium transition-colors duration-200 rounded-md whitespace-nowrap ${
                     isActive("/dashboard")
-                      ? "text-primary bg-primary/10"
-                      : "text-foreground hover:text-primary hover:bg-primary/5"
+                      ? "text-primary"
+                      : "text-foreground hover:text-primary"
                   }`}
                   data-testid="nav-dashboard"
                 >
@@ -156,14 +156,14 @@ export default function Navigation() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="lg:hidden bg-background border-t border-border shadow-lg"
+            className="lg:hidden fixed inset-0 top-16 bg-background z-40 overflow-y-auto"
             data-testid="mobile-menu"
           >
-            <div className="px-4 py-4 space-y-1">
+            <div className="px-4 py-6 space-y-2 min-h-full">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
