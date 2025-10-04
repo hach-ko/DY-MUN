@@ -100,15 +100,7 @@ export default function Navigation() {
                   Login
                 </Button>
               )}
-              <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSeMv3_996f1ifqRyloEstNA5F-BPhCszbtgJ-ksbORin-f_UQ/viewform"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-primary text-primary-foreground px-4 py-1 rounded-md text-xs font-medium hover:bg-accent transition-colors duration-200"
-                data-testid="register-button-desktop"
-              >
-                Register Now
-              </a>
+
             </div>
           </div>
 

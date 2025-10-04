@@ -21,7 +21,7 @@ export default function LoginDialog({ open, onOpenChange, onLoginSuccess }: Logi
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!gmail || !password) {
       toast({
         title: "Missing fields",
@@ -40,9 +40,10 @@ export default function LoginDialog({ open, onOpenChange, onLoginSuccess }: Logi
         onOpenChange(false);
         setGmail("");
         setPassword("");
-        
+
         await onLoginSuccess();
-        
+        window.location.href = "/dashboard"; // Redirect to dashboard using basic JavaScript
+
         toast({
           title: "Login successful",
           description: "Welcome to DYMUN!",
