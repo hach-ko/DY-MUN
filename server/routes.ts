@@ -20,30 +20,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { gmail, password } = req.body;
       
-      console.log("Login attempt for:", gmail);
-      
       if (!gmail || !password) {
         return res.status(400).json({ message: "Gmail and password are required" });
       }
 
       const user = await storage.getUserByGmail(gmail);
-      console.log("User found:", user ? "Yes" : "No");
       if (!user) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
       const isValid = await bcrypt.compare(password, user.password);
-      console.log("Password valid:", isValid);
       if (!isValid) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
       req.session.userId = user.id;
       
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
+      
       const { password: _, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword });
     } catch (error) {
-      console.error("Login error:", error);
       res.status(500).json({ message: "Login failed" });
     }
   });
