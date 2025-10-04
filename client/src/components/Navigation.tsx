@@ -56,13 +56,13 @@ export default function Navigation() {
             </h1>
           </Link>
 
-          <div className="hidden lg:flex items-center justify-center flex-1 overflow-x-auto">
+          <div className="hidden lg:flex items-center justify-center flex-1">
             <div className="flex items-center gap-0.5">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`nav-link px-2 py-2 text-xs font-medium transition-all duration-200 rounded-md whitespace-nowrap ${
+                  className={`relative nav-link px-2 py-2 text-xs font-medium transition-all duration-200 rounded-md whitespace-nowrap ${
                     isActive(item.href)
                       ? "text-primary bg-primary/10"
                       : "text-foreground hover:text-primary hover:bg-primary/5"
@@ -70,6 +70,14 @@ export default function Navigation() {
                   data-testid={`nav-${item.label.toLowerCase().replace(" ", "-")}`}
                 >
                   {item.label}
+                  {isActive(item.href) && (
+                    <motion.div
+                      layoutId="activeNavUnderline"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
+                      initial={false}
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
                 </Link>
               ))}
             </div>
