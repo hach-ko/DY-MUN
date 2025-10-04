@@ -131,7 +131,7 @@ export default function Navigation() {
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "tween", duration: 0.3 }}
-            className="md:hidden bg-card/98 backdrop-blur-sm border-t border-border fixed top-16 left-0 w-full h-[calc(100vh-4rem)] z-40 overflow-y-auto"
+            className="md:hidden bg-black border-t border-border fixed top-16 left-0 w-full h-[calc(100vh-4rem)] z-40 overflow-y-auto"
             data-testid="mobile-menu"
           >
             <div className="px-4 pt-4 pb-6 space-y-2">
