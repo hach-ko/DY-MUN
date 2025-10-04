@@ -1,6 +1,5 @@
 import { type User, type InsertUser, type ForumDoubt, type InsertForumDoubt } from "@shared/schema";
 import { randomUUID } from "crypto";
-import bcrypt from "bcrypt";
 import fs from "fs/promises";
 import path from "path";
 
@@ -915,8 +914,7 @@ export class MemStorage implements IStorage {
     const users: User[] = [];
     for (const userData of placeholderUsers) {
       const id = randomUUID();
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
-      const user: User = { ...userData, password: hashedPassword, id };
+      const user: User = { ...userData, password: userData.password, id };
       users.push(user);
     }
     await this.writeUsersToFileInternal(users);
@@ -942,8 +940,7 @@ export class MemStorage implements IStorage {
     const operation = async (): Promise<User> => {
       const users = await this.readUsersFromFile();
       const id = randomUUID();
-      const hashedPassword = await bcrypt.hash(insertUser.password, 10);
-      const user: User = { ...insertUser, password: hashedPassword, id };
+      const user: User = { ...insertUser, password: insertUser.password, id };
       users.push(user);
       await this.writeUsersToFileInternal(users);
       return user;
