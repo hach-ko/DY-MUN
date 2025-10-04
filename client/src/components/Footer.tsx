@@ -13,10 +13,7 @@ export default function Footer() {
             </p>
             <div className="flex space-x-4">
               {[
-                { icon: <Twitter className="w-5 h-5" />, href: "#" },
-                { icon: <Instagram className="w-5 h-5" />, href: "#" },
-                { icon: <Linkedin className="w-5 h-5" />, href: "#" },
-                { icon: <Facebook className="w-5 h-5" />, href: "#" },
+                { icon: <Instagram className="w-5 h-5" />, href: "https://www.instagram.com/dymun.nerul/" },
               ].map((social, index) => (
                 <a
                   key={index}
@@ -29,7 +26,7 @@ export default function Footer() {
               ))}
             </div>
           </div>
-          
+
           <div>
             <h4 className="font-semibold text-card-foreground mb-4">Quick Links</h4>
             <ul className="space-y-2">
@@ -51,20 +48,20 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-          
+
           <div>
             <h4 className="font-semibold text-card-foreground mb-4">Contact</h4>
             <ul className="space-y-2 text-muted-foreground">
-              <li>info@dymun.org</li>
-              <li>+1 (555) 123-4567</li>
-              <li>International Conference Center</li>
+              <li>dymun@dypisnerul.in</li>
+              <li>+91 86574 40454</li>
+              <li>D Y Patil International School</li>
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-border mt-8 pt-8 text-center">
           <p className="text-muted-foreground">
-            © 2024 DYMUN. All rights reserved. | Empowering future diplomats worldwide. | Website by{" "}
+            © 2025 DYMUN. All rights reserved. | Made with Love by{" "}
             <a
               href="https://www.linkedin.com/in/dhruvsraina"
               target="_blank"
@@ -72,7 +69,7 @@ export default function Footer() {
               className="text-primary hover:text-primary/80 font-semibold transition-colors duration-200 underline decoration-primary/50 hover:decoration-primary"
               data-testid="footer-developer-link"
             >
-              dhruv raina
+              Dhruv Raina
             </a>
           </p>
         </div>

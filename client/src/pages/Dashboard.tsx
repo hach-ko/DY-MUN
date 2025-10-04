@@ -107,11 +107,11 @@ export default function Dashboard() {
           animate={{ y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="font-serif text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-4">
+          <h1 className="font-sans font-bold text-5xl md:text-6xl text-primary mb-4">
             My Dashboard
           </h1>
           <p className="text-xl text-muted-foreground">
-            Welcome back, Delegate! 🌟
+            Welcome back, Delegate! 
           </p>
         </motion.div>
 

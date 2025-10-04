@@ -4,56 +4,56 @@ import ScrollReveal from "@/components/ScrollReveal";
 import { useState } from "react";
 
 export default function ExecutiveCommittee() {
-  const secretariat = [
-    {
-      name: "Aayan Kumar",
-      role: "Secretary General",
-      description: "Leading DYMUN with 5+ years of MUN experience and passion for diplomacy.",
-      photo: "/ec/aayan.jpg",
-    },
-    {
-      name: "Yuvraj Behera",
-      role: "Deputy Joint Secretary General",
-      description: "Yuvraj works closely with the Secretariat to facilitate seamless coordination across all committees. Their role involves supporting both the Executive Board and delegates, ensuring the conference operates flawlessly.",
-      photo: "/ec/yuvraj.jpg",
-    },
-    {
-      name: "Suvirr Menon",
-      role: "Deputy Joint Secretary General",
-      description: "Suvirr co-leads from the front, leveraging international Model United Nations experience to ensure smooth conference execution. They oversee committees and serve as a vital bridge between the Executive Board and delegates.",
-      photo: "/ec/suvirr.jpg",
-    },
-    {
-      name: "Ruveer",
-      role: "REDACTED",
-      description: "Details will be announced soon.",
-      photo: "/ec/ruveer.jpg",
-    },
-    {
-      name: "Krisha",
-      role: "REDACTED",
-      description: "Details will be announced soon.",
-      photo: "/ec/krisha.jpg",
-    },
-    {
-      name: "Atharva",
-      role: "REDACTED",
-      description: "Details will be announced soon.",
-      photo: "/ec/atharva.jpg",
-    },
-    {
-      name: "Zaina",
-      role: "REDACTED",
-      description: "Details will be announced soon.",
-      photo: "/ec/zaina.jpg",
-    },
-    {
-      name: "Swarupa",
-      role: "REDACTED",
-      description: "Details will be announced soon.",
-      photo: "/ec/swarupa.jpg",
-    },
-  ];
+const secretariat = [
+  {
+    name: "Aayan Kumar",
+    role: "Secretary General",
+    description: "With over 38 MUN conferences, Aayan excels in public speaking, negotiation, and global governance, leading DYMUN with passion and expertise in diplomacy.",
+    photo: "/ec/aayan.jpg",
+  },
+  {
+    name: "Yuvraj Behera",
+    role: "Joint Deputy Secretary General",
+    description: "Yuvraj brings energy and problem-solving skills, fostering collaboration and ensuring seamless coordination across committees with his supportive leadership.",
+    photo: "/ec/yuvraj.jpg",
+  },
+  {
+    name: "Suvirr Menon",
+    role: "Joint Deputy Secretary General",
+    description: "With experience in over 15 MUNs, Suvirr’s debating skills and international perspective ensure smooth conference execution and meaningful discussions.",
+    photo: "/ec/suvirr.jpg",
+  },
+  {
+    name: "Ruveer Kaul",
+    role: "Director General",
+    description: "An experienced MUN delegate, Ruveer leads with clarity and responsibility, guiding discussions and fostering collaboration with strong leadership.",
+    photo: "/ec/ruveer.jpg",
+  },
+  {
+    name: "Krisha Arora",
+    role: "Joint Deputy Director General",
+    description: "Krisha’s vibrant energy and communication skills make her a collaborative team player, driving creative solutions and a positive MUN environment.",
+    photo: "/ec/krisha.jpg",
+  },
+  {
+    name: "Atharva Deshpande",
+    role: "Joint Deputy Secretary General",
+    description: "Atharva’s sharp thinking and enthusiasm inspire thoughtful discussions, leveraging his communication skills to lead and engage effectively.",
+    photo: "/ec/atharva.jpg",
+  },
+  {
+    name: "Zaina Baqri",
+    role: "Charge D’Affaires",
+    description: "An award-winning debater and published poet, Zaina excels in public speaking and leadership, bringing creativity and dynamic perspectives to MUN.",
+    photo: "/ec/zaina.jpg",
+  },
+  {
+    name: "Swarupa Lad",
+    role: "Charge D’Affaires",
+    description: "Passionate about global issues, Swarupa’s problem-solving and collaborative approach drive meaningful outcomes with creativity and dedication.",
+    photo: "/ec/swarupa.jpg",
+  },
+];
 
   const [loadedImages, setLoadedImages] = useState({});
 

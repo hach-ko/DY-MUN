@@ -112,7 +112,7 @@ export default function LoginDialog({ open, onOpenChange, onLoginSuccess }: Logi
           </Button>
         </form>
         <div className="mt-4 text-center text-sm text-muted-foreground">
-          <p>Test credentials: delegate1@example.com / password123</p>
+          <p>Login using the details mailed to you!</p>
         </div>
       </DialogContent>
     </Dialog>

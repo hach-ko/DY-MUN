@@ -28,14 +28,14 @@ export default function Home() {
               <span className="text-primary">DYMUN 2025</span>
             </h1>
           </ScrollReveal>
-          
+
           <ScrollReveal delay={0.2}>
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
               An exciting platform for students to sharpen their Model United Nations skills in a real-world setting. 
               Step into the shoes of global leaders over two immersive days.
             </p>
           </ScrollReveal>
-          
+
           <ScrollReveal delay={0.4}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
