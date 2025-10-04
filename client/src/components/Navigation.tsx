@@ -12,7 +12,6 @@ export default function Navigation() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const { user, logout, login } = useAuth();
 
-  // Scroll to top on route change
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location]);
@@ -41,158 +40,181 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-sm border-b border-border z-50">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
-        <div className="flex justify-between items-center h-14">
-          {/* Logo */}
+    <nav className="fixed top-0 w-full bg-background/95 backdrop-blur-md border-b border-border z-50 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
           <Link href="/" data-testid="logo-link">
-            <h1 className="text-lg font-bold text-primary cursor-pointer font-poppins">
+            <h1 className="text-xl md:text-2xl font-bold text-primary cursor-pointer font-poppins hover:opacity-80 transition-opacity">
               DYMUN
             </h1>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-6 flex items-baseline space-x-4">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`nav-link text-foreground hover:text-primary px-2 py-1 text-xs font-medium transition-colors duration-200 ${
-                    isActive(item.href) ? "active" : ""
-                  }`}
-                  data-testid={`nav-${item.label.toLowerCase().replace(" ", "-")}`}
-                >
-                  {item.label}
-                </Link>
-              ))}
-              {user ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    className={`nav-link text-foreground hover:text-primary px-2 py-1 text-xs font-medium transition-colors duration-200 flex items-center gap-1 ${
-                      isActive("/dashboard") ? "active" : ""
-                    }`}
-                    data-testid="nav-dashboard"
-                  >
-                    <User size={14} />
-                    Dashboard
-                  </Link>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={logout}
-                    className="text-xs h-7 flex items-center gap-1"
-                    data-testid="button-logout-desktop"
-                  >
-                    <LogOut size={14} />
-                    Logout
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={() => setIsLoginOpen(true)}
-                  className="text-xs h-7"
-                  data-testid="button-login-desktop"
-                >
-                  Login
-                </Button>
-              )}
-              <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSeMv3_996f1ifqRyloEstNA5F-BPhCszbtgJ-ksbORin-f_UQ/viewform"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-primary text-primary-foreground px-4 py-1 rounded-md text-xs font-medium hover:bg-accent transition-colors duration-200"
-                data-testid="register-button-desktop"
+          <div className="hidden lg:flex items-center space-x-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`relative nav-link px-3 py-2 text-sm font-medium transition-all duration-200 rounded-md ${
+                  isActive(item.href)
+                    ? "text-primary bg-primary/10"
+                    : "text-foreground hover:text-primary hover:bg-primary/5"
+                }`}
+                data-testid={`nav-${item.label.toLowerCase().replace(" ", "-")}`}
               >
-                Register Now
-              </a>
-            </div>
+                {item.label}
+                {isActive(item.href) && (
+                  <motion.div
+                    layoutId="activeNav"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+              </Link>
+            ))}
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="hidden lg:flex items-center space-x-3">
+            {user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className={`flex items-center gap-2 px-3 py-2 text-sm font-medium transition-all duration-200 rounded-md ${
+                    isActive("/dashboard")
+                      ? "text-primary bg-primary/10"
+                      : "text-foreground hover:text-primary hover:bg-primary/5"
+                  }`}
+                  data-testid="nav-dashboard"
+                >
+                  <User size={16} />
+                  Dashboard
+                </Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={logout}
+                  className="flex items-center gap-2 h-9"
+                  data-testid="button-logout-desktop"
+                >
+                  <LogOut size={16} />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsLoginOpen(true)}
+                className="h-9"
+                data-testid="button-login-desktop"
+              >
+                Login
+              </Button>
+            )}
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSeMv3_996f1ifqRyloEstNA5F-BPhCszbtgJ-ksbORin-f_UQ/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-primary text-primary-foreground px-5 py-2 rounded-md text-sm font-semibold hover:bg-primary/90 transition-all duration-200 shadow-sm hover:shadow-md"
+              data-testid="register-button-desktop"
+            >
+              Register Now
+            </a>
+          </div>
+
+          <div className="lg:hidden">
             <button
               onClick={toggleMobileMenu}
-              className="text-foreground hover:text-primary focus:outline-none focus:text-primary"
+              className="text-foreground hover:text-primary focus:outline-none transition-colors p-2"
               data-testid="mobile-menu-button"
+              aria-label="Toggle menu"
             >
-              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Navigation */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ x: "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ type: "tween", duration: 0.3 }}
-            className="md:hidden bg-card border-t border-border fixed top-14 left-0 w-full h-screen z-40"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="lg:hidden bg-background border-t border-border shadow-lg"
             data-testid="mobile-menu"
           >
-            <div className="px-3 pt-2 pb-3 space-y-1">
+            <div className="max-w-7xl mx-auto px-4 py-4 space-y-1">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={closeMobileMenu}
-                  className="text-foreground hover:text-primary block px-2 py-1 text-sm font-medium"
+                  className={`block px-4 py-3 text-base font-medium rounded-lg transition-all duration-200 ${
+                    isActive(item.href)
+                      ? "bg-primary/10 text-primary"
+                      : "text-foreground hover:bg-primary/5 hover:text-primary"
+                  }`}
                   data-testid={`mobile-nav-${item.label.toLowerCase().replace(" ", "-")}`}
                 >
                   {item.label}
                 </Link>
               ))}
-              {user ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    onClick={closeMobileMenu}
-                    className="text-foreground hover:text-primary block px-2 py-1 text-sm font-medium flex items-center gap-2"
-                    data-testid="mobile-nav-dashboard"
-                  >
-                    <User size={16} />
-                    Dashboard
-                  </Link>
+              
+              <div className="pt-4 mt-4 border-t border-border space-y-3">
+                {user ? (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      onClick={closeMobileMenu}
+                      className={`flex items-center gap-3 px-4 py-3 text-base font-medium rounded-lg transition-all duration-200 ${
+                        isActive("/dashboard")
+                          ? "bg-primary/10 text-primary"
+                          : "text-foreground hover:bg-primary/5 hover:text-primary"
+                      }`}
+                      data-testid="mobile-nav-dashboard"
+                    >
+                      <User size={20} />
+                      Dashboard
+                    </Link>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        logout();
+                        closeMobileMenu();
+                      }}
+                      className="w-full flex items-center gap-2 justify-center h-11"
+                      data-testid="button-logout-mobile"
+                    >
+                      <LogOut size={20} />
+                      Logout
+                    </Button>
+                  </>
+                ) : (
                   <Button
-                    variant="outline"
                     onClick={() => {
-                      logout();
+                      setIsLoginOpen(true);
                       closeMobileMenu();
                     }}
-                    className="w-full mt-2 flex items-center gap-2 justify-center"
-                    data-testid="button-logout-mobile"
+                    variant="outline"
+                    className="w-full h-11"
+                    data-testid="button-login-mobile"
                   >
-                    <LogOut size={16} />
-                    Logout
+                    Login
                   </Button>
-                </>
-              ) : (
-                <Button
-                  onClick={() => {
-                    setIsLoginOpen(true);
-                    closeMobileMenu();
-                  }}
-                  className="w-full mt-2"
-                  data-testid="button-login-mobile"
+                )}
+                <a
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSeMv3_996f1ifqRyloEstNA5F-BPhCszbtgJ-ksbORin-f_UQ/viewform"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={closeMobileMenu}
+                  className="bg-primary text-primary-foreground w-full block text-center px-5 py-3 rounded-lg text-base font-semibold hover:bg-primary/90 transition-all duration-200 shadow-sm"
+                  data-testid="register-button-mobile"
                 >
-                  Login
-                </Button>
-              )}
-              <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSeMv3_996f1ifqRyloEstNA5F-BPhCszbtgJ-ksbORin-f_UQ/viewform"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-primary text-primary-foreground block px-4 py-2 rounded-md text-sm font-medium hover:bg-accent transition-colors duration-200 mt-3"
-                data-testid="register-button-mobile"
-              >
-                Register Now
-              </a>
+                  Register Now
+                </a>
+              </div>
             </div>
           </motion.div>
         )}
